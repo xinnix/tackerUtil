@@ -1,5 +1,10 @@
 package tackerUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+
+
 public class MsgParser {
 	
 	public static short MSG_SEND = 0x01;
@@ -17,6 +22,10 @@ public class MsgParser {
 	public short msgEnd;	
 	public byte[] msgByteBuf;
 	
+	//合并字节数组
+	private ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+	
+	
 	MsgParser(int type,String termID,short msgType,short msgArg){
 		if (type==MsgParser.MSG_SEND){
 			this.msgHead="$$";
@@ -26,10 +35,30 @@ public class MsgParser {
 			this.msgArg = msgArg;
 			this.msgContent = "";
 			this.msgEnd = 0x0d0a;
-		}
+			try{
+				bos.write(this.msgHead.getBytes());
+				bos.write(this.msgLength);
+				bos.write(this.msgTermID.getBytes());
+				bos.write(this.msgType);
+				
+				
+				
+				this.msgByteBuf = bos.toByteArray();
+				
+			}catch(IOException e){
+				e.printStackTrace();
+			}finally{
+				try{
+					bos.close();
+				}catch(IOException e){
+					e.printStackTrace();
+				}
+				
+			}
+		}//end of MsgParser
 		
 		
-	
+		
 		
 	}
 	

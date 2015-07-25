@@ -7,8 +7,13 @@ import java.util.zip.Inflater;
 
 public class DPacketParser {
 	
+	
+	
+	
+	
+	
 	public int pktHead=0x12345678;	//数据库报文头
-	public int pktLength=0x00000000;
+	public int pktLength;
 	public int pktSingal;
 	public int pktDataRow;
 	public int pktDataColumn; 
@@ -23,34 +28,39 @@ public class DPacketParser {
 	public byte[] pktBuffer;
 	
 	
-	DPacketParser(int pktSingal,int pktDataRow,int pktDataColumn,int[] pktDataColumnType,int[] pktDataColumnLength,byte[] pktData){
+	public DPacketParser(int pktSingal,int pktDataRow,int pktDataColumn,int[] pktDataColumnType,int[] pktDataColumnLength,byte[] pktData){
 		this.pktSingal = pktSingal;
 		this.pktDataRow = pktDataRow;
 		this.pktDataColumn = pktDataColumn;
 		this.pktDataColumnType = pktDataColumnType;
 		this.pktDataColumnLength = pktDataColumnLength;
-		this.pktData = pktData;
+	//	System.out.println(ByteHexUtil.bytesToHexString(pktData));
+		this.pktData = JzilbHelp.jzlib(pktData);
 		
+		this.pktLength = 5*4+this.pktDataColumn*4*2+this.pktData.length+6;
+		
+		//System.out.println(ByteHexUtil.bytesToHexString(this.pktData));
+		//this.pktData = pktData;
 		ByteArrayOutputStream  bis = new ByteArrayOutputStream();
 		
 		try{
-			bis.write(this.pktHead);
-			bis.write(this.pktLength);
-			bis.write(this.pktSingal);
-			bis.write(this.pktDataRow);
-			bis.write(this.pktDataColumn);
+			bis.write(ByteHexUtil.intToByte(this.pktHead));
+			bis.write(ByteHexUtil.intToByte(this.pktLength));
+			bis.write(ByteHexUtil.intToByte(this.pktSingal));
+			bis.write(ByteHexUtil.intToByte(this.pktDataRow));
+			bis.write(ByteHexUtil.intToByte(this.pktDataColumn));
 			for (int ii=0;ii<this.pktDataColumn;ii++){
-				bis.write(pktDataColumnType[ii]);
+				bis.write(ByteHexUtil.intToByte(pktDataColumnType[ii]));
 			}
 			for (int ii=0;ii<this.pktDataColumn;ii++){
-				bis.write(pktDataColumnLength[ii]);
+				bis.write(ByteHexUtil.intToByte(pktDataColumnLength[ii]));
 			}
 			bis.write(this.pktData);
-			this.pktCheck =packetCheck( bis.toByteArray());
+			this.pktCheck =packetCheck(bis.toByteArray());
 			
 			bis.write(this.pktCheck);
 			bis.write(this.pktVersion);
-			bis.write(this.pktEnd);
+			bis.write(ByteHexUtil.intToByte(this.pktEnd));
 			
 			
 			this.pktBuffer = bis.toByteArray();
@@ -60,115 +70,43 @@ public class DPacketParser {
 		}
 		
 		
-		
-		
 	}
 	
-	DPacketParser(byte[] pktBuffer){
+	public DPacketParser(byte[] pktBuffer){
 		
 		int head = 0;
 		
-		this.pktHead = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=3));
-		this.pktLength = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
-		this.pktSingal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
-		this.pktDataRow = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
-		this.pktDataColumn = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
+		
+		this.pktHead = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
+		this.pktLength = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+		byte[] pkt =  Arrays.copyOfRange(pktBuffer, 0, this.pktLength);
+		
+		this.pktSingal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+		this.pktDataRow = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+		this.pktDataColumn = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
 		for (int ii=0;ii<this.pktDataColumn;ii++){
-			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
+			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
 		}
 		for (int ii=0;ii<this.pktDataColumn;ii++){
-			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=3));
+			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
 		}
-		this.pktData = 
+		
+		int datalen = this.pktLength-4*5-this.pktDataColumn*4*2-2-2-4;
+		
+		this.pktData = JzilbHelp.unjzlib(Arrays.copyOfRange(pkt,head++,head+=(datalen-1)));
+		this.pktCheck = pkt[head++];
+		this.pktVersion = pkt[head++];
+		
+		this.pktHead = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pkt,head++,head+=3));
 	}
 	
 	private byte packetCheck(byte[] data){
 		byte res=data[0];
-	    for (int ii=0; ii<data.length;ii++)
-	    {
-	       if (ii > 1)
-	       {
-	    	   res = (byte) (res ^ data[ii+1]);
-	       }
+	    for (int ii=1; ii<data.length;ii++)
+	    { 
+	    	   res = (byte) (res ^ data[ii]);
 	     }
 		return res;
 	}
-	
-	
-	/** 
-     * 压缩 
-     *  
-     * @param data 
-     *            待压缩数据 
-     * @return byte[] 压缩后的数据 
-     */  
-    public static byte[] compress(byte[] data) {  
-        byte[] output = new byte[0];  
-  
-        Deflater compresser = new Deflater();  
-  
-        compresser.reset();  
-        compresser.setInput(data);  
-        compresser.finish();  
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);  
-        try {  
-            byte[] buf = new byte[1024];  
-            while (!compresser.finished()) {  
-                int i = compresser.deflate(buf);  
-                bos.write(buf, 0, i);  
-            }  
-            output = bos.toByteArray();  
-        } catch (Exception e) {  
-            output = data;  
-            e.printStackTrace();  
-        } finally {  
-            try {  
-                bos.close();  
-            } catch (IOException e) {  
-                e.printStackTrace();  
-            }  
-        }  
-        compresser.end();  
-        return output;  
-    }
-    
-    
-    
-    /** 
-     * 解压缩 
-     *  
-     * @param data 
-     *            待压缩的数据 
-     * @return byte[] 解压缩后的数据 
-     */  
-    public static byte[] decompress(byte[] data) {  
-        byte[] output = new byte[0];  
-  
-        Inflater decompresser = new Inflater();  
-        decompresser.reset();  
-        decompresser.setInput(data);  
-  
-        ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);  
-        try {  
-            byte[] buf = new byte[1024];  
-            while (!decompresser.finished()) {  
-                int i = decompresser.inflate(buf);  
-                o.write(buf, 0, i);  
-            }  
-            output = o.toByteArray();  
-        } catch (Exception e) {  
-            output = data;  
-            e.printStackTrace();  
-        } finally {  
-            try {  
-                o.close();  
-            } catch (IOException e) {  
-                e.printStackTrace();  
-            }  
-        }  
-  
-        decompresser.end();  
-        return output;  
-    }  
 
 }

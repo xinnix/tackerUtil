@@ -11,24 +11,13 @@ public class Util {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		int[] pktDataColumnType  = {0x00000001,0x00000001};
-		int[] pktDataColumnLength = {0x0000000c,0x0000000c};
-		
-		byte[] ss = "system".getBytes();
 		
 		
-		byte[] ps = "bsjgps".getBytes();
-		
-	
-	//	System.out.println(ByteHexUtil.bytesToHexString(password));
-		byte[] pktData = new byte[24];
-		System.arraycopy(ss, 0, pktData, 0, ss.length);
-		System.arraycopy(ps, 0, pktData, ss.length*2, ps.length);
+		byte[] msg = DataBaseEvent.getLoginPacket("system", "bsjgps");
 		
 		
-		DPacketParser dp = new DPacketParser(0x00000001,0x00000001,0x00000002,pktDataColumnType, pktDataColumnLength, pktData);
 		
-		NetworkAdpter na = new NetworkAdpter("61.145.122.143",4519);
+		//NetworkAdpter na = new NetworkAdpter("61.145.122.143",4519);
 		//byte [] a = {1,2};
 		//String str="123456780000003a00000001000000010000000200000001000000010000000c0000000c789CCBC9CE666060C8019300142E0285990187654321";
 		String str="123456780000004200000001000000010000000200000001000000010000000c0000000c789c2bae2c2e49cd650083a4e2acf48262081b005111052fce0187654321";
@@ -50,8 +39,8 @@ public class Util {
 		
 		//System.out.println(ByteHexUtil.bytesToHexString(dp.pktBuffer));
 		//System.out.println(ByteHexUtil.bytesToHexString(ziped));
-		System.out.println(str.length());
-		na.start();
+		System.out.println(str.equals(ByteHexUtil.bytesToHexString(msg)));
+		//na.start();
 
 	}
 	public static String str2HexStr(String str) {  

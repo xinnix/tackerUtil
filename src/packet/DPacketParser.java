@@ -6,9 +6,26 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class DPacketParser {
+	public static int DATA_TYPE_STRING = 0x00000001;
+	public static int DATA_TYPE_INTEGER = 0x00000002;
+	public static int DATA_TYPE_BYTE = 0x00000003;
+	public static int DATA_TYPE_DOUBLE = 0x00000004;
+	public static int DATA_TYPE_BOOLEAN = 0x00000005;
 	
+	public static int SIGNAL_HEARTBEAT = 0x00000000;
+	public static int SIGNAL__RE_HEARTBEAT = 0xffff0000;
 	
+	public static int SIGNAL_LOGIN = 0x00000001;
+	public static int SIGNAL_RE_LOGIN = 0xffff0001;
 	
+	public static int SIGNAL_GETUSERINFO = 0x00000003;
+	public static int SIGNAL_RE_GETUSERINFO = 0xffff0003;
+	
+	public static int SIGNAL_GETUSERCARGROUP = 0x00000005;
+	public static int SIGNAL_RE_GETUSERCARGROUP = 0xffff0005;
+	
+	public static int SIGNAL_GETCARTRACK = 0x00000011;
+	public static int SIGNAL_RE_GETCARTRACK = 0x00000011;
 	
 	
 	
@@ -37,7 +54,7 @@ public class DPacketParser {
 	//	System.out.println(ByteHexUtil.bytesToHexString(pktData));
 		this.pktData = JzilbHelp.jzlib(pktData);
 		
-		this.pktLength = 5*4+this.pktDataColumn*4*2+this.pktData.length+6;
+		this.pktLength = 20+this.pktDataColumn*4*2+this.pktData.length+6;//报文长度
 		
 		//System.out.println(ByteHexUtil.bytesToHexString(this.pktData));
 		//this.pktData = pktData;

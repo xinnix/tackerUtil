@@ -6,26 +6,26 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class DPacketParser {
-	public static int DATA_TYPE_STRING = 0x00000001;
-	public static int DATA_TYPE_INTEGER = 0x00000002;
-	public static int DATA_TYPE_BYTE = 0x00000003;
-	public static int DATA_TYPE_DOUBLE = 0x00000004;
-	public static int DATA_TYPE_BOOLEAN = 0x00000005;
+	public static final int DATA_TYPE_STRING = 0x00000001;
+	public static final int DATA_TYPE_INTEGER = 0x00000002;
+	public static final int DATA_TYPE_BYTE = 0x00000003;
+	public static final int DATA_TYPE_DOUBLE = 0x00000004;
+	public static final int DATA_TYPE_BOOLEAN = 0x00000005;
 	
-	public static int SIGNAL_HEARTBEAT = 0x00000000;
-	public static int SIGNAL__RE_HEARTBEAT = 0xffff0000;
+	public static final int SIGNAL_HEARTBEAT = 0x00000000;
+	public static final int SIGNAL__RE_HEARTBEAT = 0xffff0000;
 	
-	public static int SIGNAL_LOGIN = 0x00000001;
-	public static int SIGNAL_RE_LOGIN = 0xffff0001;
+	public static final int SIGNAL_LOGIN = 0x00000001;
+	public static final int SIGNAL_RE_LOGIN = 0xffff0001;
 	
-	public static int SIGNAL_GETUSERINFO = 0x00000003;
-	public static int SIGNAL_RE_GETUSERINFO = 0xffff0003;
+	public static final int SIGNAL_GETUSERINFO = 0x00000003;
+	public static final int SIGNAL_RE_GETUSERINFO = 0xffff0003;
 	
-	public static int SIGNAL_GETUSERCARGROUP = 0x00000005;
-	public static int SIGNAL_RE_GETUSERCARGROUP = 0xffff0005;
+	public static final int SIGNAL_GETUSERCARGROUP = 0x00000005;
+	public static final int SIGNAL_RE_GETUSERCARGROUP = 0xffff0005;
 	
-	public static int SIGNAL_GETCARTRACK = 0x00000011;
-	public static int SIGNAL_RE_GETCARTRACK = 0x00000011;
+	public static final int SIGNAL_GETCARTRACK = 0x00000011;
+	public static final int SIGNAL_RE_GETCARTRACK = 0x00000011;
 	
 	
 	
@@ -44,6 +44,8 @@ public class DPacketParser {
 	
 	public byte[] pktBuffer;
 	
+	
+	public DataTable dataTable;
 	
 	public DPacketParser(int pktSingal,int pktDataRow,int pktDataColumn,int[] pktDataColumnType,int[] pktDataColumnLength,byte[] pktData){
 		this.pktSingal = pktSingal;
@@ -119,6 +121,8 @@ public class DPacketParser {
 		this.pktVersion = pkt[head++];
 		
 		this.pktEnd = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pkt,head++,head+=4));
+		
+		this.dataTable = new DataTable(this.pktDataRow,this.pktDataColumn,this.pktDataColumnType,this.pktDataColumnLength,this.pktData);
 	}
 	
 	private byte packetCheck(byte[] data){
@@ -131,3 +135,6 @@ public class DPacketParser {
 	}
 
 }
+
+
+

@@ -91,30 +91,34 @@ public class DPacketParser {
 	
 	public DPacketParser(byte[] pktBuffer){
 		
-		int head = 0;
+		int head = 0;//指向包头指针
+		
+		
 		
 		
 		this.pktHead = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
-		this.pktLength = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+		this.pktLength = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		byte[] pkt =  Arrays.copyOfRange(pktBuffer, 0, this.pktLength);
 		
-		this.pktSingal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
-		this.pktDataRow = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
-		this.pktDataColumn = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+		this.pktSingal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
+		this.pktDataRow = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
+		this.pktDataColumn = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
+		this.pktDataColumnType = new int[this.pktDataColumn];
+		this.pktDataColumnLength = new int[this.pktDataColumn];
 		for (int ii=0;ii<this.pktDataColumn;ii++){
-			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		}
 		for (int ii=0;ii<this.pktDataColumn;ii++){
-			this.pktDataColumnType[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head++,head+=4));
+			this.pktDataColumnLength[ii] = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		}
 		
-		int datalen = this.pktLength-4*5-this.pktDataColumn*4*2-2-2-4;
-		
-		this.pktData = JzilbHelp.unjzlib(Arrays.copyOfRange(pkt,head++,head+=(datalen-1)));
+		int datalen = this.pktLength-4*5-this.pktDataColumn*4*2-6;
+		byte[] dataorg = Arrays.copyOfRange(pkt,head,head+=datalen);
+		this.pktData = JzilbHelp.unjzlib(dataorg);
 		this.pktCheck = pkt[head++];
 		this.pktVersion = pkt[head++];
 		
-		this.pktHead = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pkt,head++,head+=3));
+		this.pktEnd = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pkt,head++,head+=4));
 	}
 	
 	private byte packetCheck(byte[] data){

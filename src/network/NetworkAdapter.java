@@ -8,14 +8,14 @@ import java.util.Arrays;
 import packet.ByteHexUtil;
 import packet.DPacketParser;
 
-public class NetworkAdpter extends Thread {
+public class NetworkAdapter extends Thread {
 	public static Socket socket;
 	public static OutputStream outputStream;
 	public static InputStream inputStream;
 	public byte[] sendBuffer;
 	public byte[] recieveBuffer = new byte[256];
 	
-	 public NetworkAdpter(String serverIP,int port){
+	 public NetworkAdapter(String serverIP,int port){
 		 super();
 		 try{
 			 socket = new Socket(InetAddress.getByName(serverIP),port);
@@ -26,7 +26,7 @@ public class NetworkAdpter extends Thread {
 		 }
 		 
 	 }
-	 public NetworkAdpter(byte[] packet){
+	 public NetworkAdapter(byte[] packet){
 		 super();
 		 this.sendBuffer= packet;
 	 }

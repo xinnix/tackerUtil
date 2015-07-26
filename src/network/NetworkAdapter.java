@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import packet.ByteHexUtil;
 import packet.DPacketParser;
+import tackerUtil.MsgEventHandler;
 
 public class NetworkAdapter extends Thread {
 	public static Socket socket;
@@ -47,14 +48,25 @@ public class NetworkAdapter extends Thread {
 		 while(true){
 			 try{		  			 			 
 				 int len = inputStream.read(recieveBuffer);
-				 System.out.println(len);
-				 ByteHexUtil.printHexString(Arrays.copyOfRange(recieveBuffer,0,len));
 				 DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
-				 System.out.println("");
-				 System.out.println("登录成功？"+dp.dataTable.table[0][0]);
-				 System.out.println("用户id："+dp.dataTable.table[0][1]);
-				 System.out.println("GPRS地址："+dp.dataTable.table[0][2]);
-				 System.out.println("GPRS端口："+dp.dataTable.table[0][3]);
+				 switch (dp.pktSingal){
+				 case DPacketParser.SIGNAL_RE_LOGIN:
+					 int userid = MsgEventHandler.rLogin(dp);
+					 System.out.println("");
+					 System.out.println("登录成功？"+dp.dataTable.table[0][0]);
+					 System.out.println("用户id："+userid);
+					 System.out.println("GPRS地址："+dp.dataTable.table[0][2]);
+					 System.out.println("GPRS端口："+dp.dataTable.table[0][3]);
+					 break;
+				 case DPacketParser.SIGNAL_RE_HEARTBEAT:
+					 System.out.println("heart beat");
+					 break;
+				 case DPacketParser.SIGNAL_RE_GETUSERCARGROUP:
+					 MsgEventHandler.rGetCarGroup(dp);
+					 break;
+				 
+				 }
+				 
 
 			 }catch(Exception e ){
 				e.printStackTrace(); 

@@ -2,6 +2,7 @@ package tackerUtil;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import network.HeartBeat;
 import network.NetworkAdapter;
 
 import packet.ByteHexUtil;
@@ -16,7 +17,12 @@ public class Util {
 		NetworkAdapter na = new NetworkAdapter("61.145.122.143",4519);
 		na.start();
 		MsgEventHandler.config(na);
-		MsgEventHandler.login("lkk", "lkk");
+		MsgEventHandler.sLogin("lkk", "lkk");
+		HeartBeat hb = new HeartBeat();
+		hb.start();
+		
+		MsgEventHandler.sGetCarGroup(2, "");
+		
 		
 		
 		

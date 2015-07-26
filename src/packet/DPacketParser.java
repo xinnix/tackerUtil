@@ -13,7 +13,7 @@ public class DPacketParser {
 	public static final int DATA_TYPE_BOOLEAN = 0x00000005;
 	
 	public static final int SIGNAL_HEARTBEAT = 0x00000000;
-	public static final int SIGNAL__RE_HEARTBEAT = 0xffff0000;
+	public static final int SIGNAL_RE_HEARTBEAT = 0xffff0000;
 	
 	public static final int SIGNAL_LOGIN = 0x00000001;
 	public static final int SIGNAL_RE_LOGIN = 0xffff0001;

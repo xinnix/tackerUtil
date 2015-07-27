@@ -64,6 +64,9 @@ public class NetworkAdapter extends Thread {
 				 case DPacketParser.SIGNAL_RE_GETUSERCARGROUP:
 					 MsgEventHandler.rGetCarGroup(dp);
 					 break;
+				 case DPacketParser.SIGNAL_RE_GETUSERINFO:
+					 MsgEventHandler.rGetUserInfo(dp);
+					 break;
 				 
 				 }
 				 

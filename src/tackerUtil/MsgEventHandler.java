@@ -1,6 +1,7 @@
 package tackerUtil;
 
 import model.CarGroup;
+import model.User;
 import network.NetworkAdapter;
 import packet.ByteHexUtil;
 import packet.DPacketParser;
@@ -57,7 +58,7 @@ public class MsgEventHandler {
 		
 	}
 	
-	public static void rGetCarGroup(DPacketParser dp){
+	public static CarGroup[] rGetCarGroup(DPacketParser dp){
 		 
 		CarGroup[] cg = new CarGroup[dp.dataTable.table.length];
 		for (int ii=0;ii<cg.length;ii++){
@@ -73,12 +74,57 @@ public class MsgEventHandler {
 		
 		
 		for (int ii=0;ii<cg.length;ii++){
-			System.out.print(""+cg[ii].vehGroupID+'#'+cg[ii].vehGroupName.trim()+'|'+cg[ii].fVehGroupID);
+			System.out.print(""+cg[ii].vehGroupID+'#'+cg[ii].vehGroupName.trim()+'|'+cg[ii].updateTime);
 			System.out.println("");	
 		}
 		
-		
+		return cg;
 		
 	}
+	
+	public static void sGetUserInfo(int userid){
+		int[] pktDataColumnType  = {DPacketParser.DATA_TYPE_INTEGER};
+		int[] pktDataColumnLength = {4};
+		byte[] pktData = new byte[4];
+		
+		byte[] buserid = ByteHexUtil.intToByte(userid);
+		
+		
+		System.arraycopy(buserid, 0, pktData, 0, buserid.length);
+		
+		
+		DPacketParser dp = new DPacketParser(DPacketParser.SIGNAL_GETUSERINFO,1,pktDataColumnType.length,pktDataColumnType, pktDataColumnLength, pktData);	
+		na.sendPacket(dp.pktBuffer);
+		
+	}
+	
+	public static User rGetUserInfo(DPacketParser dp){
+		
+		User[] u = new User[dp.dataTable.table.length];
+		for (int ii=0;ii<u.length;ii++){
+			u[ii] = new User((int)dp.dataTable.table[ii][0],
+					(String)dp.dataTable.table[ii][1],
+					(String)dp.dataTable.table[ii][2],
+					(int)dp.dataTable.table[ii][3],
+					(String)dp.dataTable.table[ii][4],
+					(String)dp.dataTable.table[ii][5],
+					(String)dp.dataTable.table[ii][6],
+					(String)dp.dataTable.table[ii][7],
+					(String)dp.dataTable.table[ii][8],
+					(String)dp.dataTable.table[ii][9],
+					(int)dp.dataTable.table[ii][10],
+					(String)dp.dataTable.table[ii][11]);
+		}
+		
+		
+		for (int ii=0;ii<u.length;ii++){
+			System.out.print(""+u[ii].username+'#'+u[ii].password.trim()+'|'+u[ii].birthday);
+			System.out.println("");	
+		}
+		
+		return u[0];
+		
+	}
+	
 
 }

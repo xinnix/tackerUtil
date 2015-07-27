@@ -1,5 +1,6 @@
 package tackerUtil;
 
+import model.Car;
 import model.CarGroup;
 import model.User;
 import network.NetworkAdapter;
@@ -123,6 +124,44 @@ public class MsgEventHandler {
 		}
 		
 		return u[0];
+		
+	}
+	
+	
+	public static void sGetCarInfo(int userid,String date){
+		int[] pktDataColumnType  = {DPacketParser.DATA_TYPE_INTEGER,DPacketParser.DATA_TYPE_STRING};
+		int[] pktDataColumnLength = {4,date.length()*2};
+		byte[] pktData = new byte[4+date.length()*2];
+		
+		byte[] buserid = ByteHexUtil.intToByte(userid);
+		byte[] bdate = date.getBytes();
+		
+		System.arraycopy(buserid, 0, pktData, 0, buserid.length);
+		System.arraycopy(bdate, 0, pktData, buserid.length, bdate.length*2);
+		
+		DPacketParser dp = new DPacketParser(DPacketParser.SIGNAL_GETCARINFO,1,2,pktDataColumnType, pktDataColumnLength, pktData);	
+		na.sendPacket(dp.pktBuffer);
+		
+	}
+	
+	
+	public static Car[] rGetCarInfo(DPacketParser dp){
+		 
+		Car[] cars = new Car[dp.dataTable.table.length];
+		for (int ii=0;ii<cars.length;ii++){
+			cars[ii] = new Car((String)dp.dataTable.table[ii][0],
+					(String)dp.dataTable.table[ii][1],
+					(String)dp.dataTable.table[ii][2]
+					);
+		}
+		
+		
+		for (int ii=0;ii<cars.length;ii++){
+			System.out.print(""+cars[ii].id.trim()+'#'+cars[ii].ipAddress.trim());
+			System.out.println("");	
+		}
+		
+		return cars;
 		
 	}
 	

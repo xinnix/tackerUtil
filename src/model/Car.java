@@ -2,9 +2,9 @@ package model;
 
 public class Car {
 	
-	String id;
-	String deviceId;
-	String ipAddress;
+	public String id;
+	public String deviceId;
+	public String ipAddress;
 	
 	public Car(String id, String deviceId, String ipAddress) {
 		super();

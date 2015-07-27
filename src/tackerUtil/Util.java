@@ -18,9 +18,9 @@ public class Util {
 		na.start();
 		MsgEventHandler.config(na);
 		MsgEventHandler.sLogin("lkk", "lkk");
-		HeartBeat hb = new HeartBeat();
-		hb.start();
-		MsgEventHandler.sGetCarGroup(2,"");
+		//HeartBeat hb = new HeartBeat();
+		//hb.start();
+		MsgEventHandler.sGetCarInfo(2,"");
 		//MsgEventHandler.sGetUserInfo(2);
 		
 		

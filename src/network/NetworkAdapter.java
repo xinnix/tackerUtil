@@ -14,7 +14,7 @@ public class NetworkAdapter extends Thread {
 	public static OutputStream outputStream;
 	public static InputStream inputStream;
 	public byte[] sendBuffer;
-	public byte[] recieveBuffer = new byte[256];
+	public byte[] recieveBuffer = new byte[2048];
 	
 	 public NetworkAdapter(String serverIP,int port){
 		 super();
@@ -48,7 +48,9 @@ public class NetworkAdapter extends Thread {
 		 while(true){
 			 try{		  			 			 
 				 int len = inputStream.read(recieveBuffer);
-				 DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
+				// System.out.println(len);
+				// System.out.println(ByteHexUtil.bytesToHexString(Arrays.copyOfRange(recieveBuffer,0,len)));
+				DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
 				 switch (dp.pktSingal){
 				 case DPacketParser.SIGNAL_RE_LOGIN:
 					 int userid = MsgEventHandler.rLogin(dp);
@@ -66,6 +68,9 @@ public class NetworkAdapter extends Thread {
 					 break;
 				 case DPacketParser.SIGNAL_RE_GETUSERINFO:
 					 MsgEventHandler.rGetUserInfo(dp);
+					 break;
+				 case DPacketParser.SIGNAL_RE_GETCARINFO:
+					 MsgEventHandler.rGetCarInfo(dp);
 					 break;
 				 
 				 }

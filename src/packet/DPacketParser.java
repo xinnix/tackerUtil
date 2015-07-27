@@ -27,6 +27,8 @@ public class DPacketParser {
 	public static final int SIGNAL_GETCARTRACK = 0x00000011;
 	public static final int SIGNAL_RE_GETCARTRACK = 0x00000011;
 	
+	public static final int SIGNAL_GETCARINFO = 0x00000006;
+	public static final int SIGNAL_RE_GETCARINFO = 0xffff0006;
 	
 	
 	public int pktHead=0x12345678;	//数据库报文头

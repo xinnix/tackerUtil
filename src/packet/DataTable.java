@@ -23,8 +23,9 @@ public class DataTable{
 				case DPacketParser.DATA_TYPE_BOOLEAN:
 					table[ii][jj]=(boolean)(ByteHexUtil.bytesToInt(Arrays.copyOfRange(data,head,head+=dataColumnLength[jj]))==0?false:true);
 					break;
-				case DPacketParser.DATA_TYPE_DOUBLE://类型解析错误！！待完善
-					table[ii][jj]=(boolean)(ByteHexUtil.bytesToInt(Arrays.copyOfRange(data,head,head+=dataColumnLength[jj]))==0?false:true);
+				case DPacketParser.DATA_TYPE_DOUBLE:
+					byte[] srcdata = Arrays.copyOfRange(data,head,head+=dataColumnLength[jj]);
+					table[ii][jj]=(double)(ByteHexUtil.bytesToDouble(srcdata));
 					break;
 				
 				}

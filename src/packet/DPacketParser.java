@@ -25,7 +25,7 @@ public class DPacketParser {
 	public static final int SIGNAL_RE_GETUSERCARGROUP = 0xffff0005;
 	
 	public static final int SIGNAL_GETCARTRACK = 0x00000011;
-	public static final int SIGNAL_RE_GETCARTRACK = 0x00000011;
+	public static final int SIGNAL_RE_GETCARTRACK = 0xffff0011;
 	
 	public static final int SIGNAL_GETCARINFO = 0x00000006;
 	public static final int SIGNAL_RE_GETCARINFO = 0xffff0006;

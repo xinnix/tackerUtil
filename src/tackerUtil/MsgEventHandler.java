@@ -2,6 +2,7 @@ package tackerUtil;
 
 import model.Car;
 import model.CarGroup;
+import model.Track;
 import model.User;
 import network.NetworkAdapter;
 import packet.ByteHexUtil;
@@ -157,12 +158,56 @@ public class MsgEventHandler {
 		
 		
 		for (int ii=0;ii<cars.length;ii++){
-			System.out.print(""+cars[ii].id.trim()+'#'+cars[ii].ipAddress.trim());
+			System.out.print(""+cars[ii].id.trim()+'#'+cars[ii].deviceId.trim()+"$"+cars[ii].ipAddress.trim());
 			System.out.println("");	
 		}
 		
 		return cars;
 		
+	}
+	
+	
+	public static void sGetCarTrack(int carid,String sdate,String edate){
+		int[] pktDataColumnType  = {DPacketParser.DATA_TYPE_INTEGER,DPacketParser.DATA_TYPE_STRING,DPacketParser.DATA_TYPE_STRING};
+		int[] pktDataColumnLength = {4,sdate.length()*2,edate.length()*2};
+		byte[] pktData = new byte[4+sdate.length()*2+edate.length()*2];
+		
+		byte[] bcarid =  ByteHexUtil.intToByte(carid);
+		byte[] bsdate=sdate.getBytes();
+		byte[] bedate=edate.getBytes();
+		
+		
+		System.arraycopy(bcarid, 0, pktData, 0, bcarid.length);
+		System.arraycopy(bsdate, 0, pktData, bcarid.length, bsdate.length);
+		System.arraycopy(bedate, 0, pktData, bcarid.length+bsdate.length*2, bedate.length);
+		DPacketParser dp = new DPacketParser(DPacketParser.SIGNAL_GETCARTRACK,1,3,pktDataColumnType, pktDataColumnLength, pktData);	
+		na.sendPacket(dp.pktBuffer);
+	}
+	public static Track[] rGetCarTrack(DPacketParser dp){
+		
+		System.out.println("got track info");
+		Track[] t = new Track[dp.dataTable.table.length];
+		for (int ii=0;ii<t.length;ii++){
+			t[ii] = new Track((int)dp.dataTable.table[ii][0],
+					(double)dp.dataTable.table[ii][1],
+					(double)dp.dataTable.table[ii][2],
+					(int)dp.dataTable.table[ii][3],
+					(int)dp.dataTable.table[ii][4],
+					(boolean)dp.dataTable.table[ii][5],
+					(String)dp.dataTable.table[ii][6],
+					(String)dp.dataTable.table[ii][7],
+					(boolean)dp.dataTable.table[ii][8],
+					(String)dp.dataTable.table[ii][9]
+					);
+		}
+		
+		
+		for (int ii=0;ii<t.length;ii++){
+			System.out.print(""+t[ii].carId+'#'+t[ii].latitude+'|'+t[ii].longitude+"$"+t[ii].sdate);
+			System.out.println("");	
+		}
+		
+		return t;
 	}
 	
 

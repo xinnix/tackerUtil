@@ -20,8 +20,8 @@ public class Util {
 		MsgEventHandler.sLogin("lkk", "lkk");
 		//HeartBeat hb = new HeartBeat();
 		//hb.start();
-		MsgEventHandler.sGetCarInfo(2,"");
-		//MsgEventHandler.sGetUserInfo(2);
+		MsgEventHandler.sGetCarTrack(3,"2015-07-28 13:23:00","2015-07-28 13:50:00");
+		//MsgEventHandler.sGetCarInfo(2, "");
 		
 		
 		

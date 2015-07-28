@@ -14,7 +14,7 @@ public class NetworkAdapter extends Thread {
 	public static OutputStream outputStream;
 	public static InputStream inputStream;
 	public byte[] sendBuffer;
-	public byte[] recieveBuffer = new byte[2048];
+	public byte[] recieveBuffer = new byte[4096];
 	
 	 public NetworkAdapter(String serverIP,int port){
 		 super();
@@ -50,28 +50,36 @@ public class NetworkAdapter extends Thread {
 				 int len = inputStream.read(recieveBuffer);
 				// System.out.println(len);
 				// System.out.println(ByteHexUtil.bytesToHexString(Arrays.copyOfRange(recieveBuffer,0,len)));
-				DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
-				 switch (dp.pktSingal){
-				 case DPacketParser.SIGNAL_RE_LOGIN:
-					 int userid = MsgEventHandler.rLogin(dp);
-					 System.out.println("");
-					 System.out.println("登录成功？"+dp.dataTable.table[0][0]);
-					 System.out.println("用户id："+userid);
-					 System.out.println("GPRS地址："+dp.dataTable.table[0][2]);
-					 System.out.println("GPRS端口："+dp.dataTable.table[0][3]);
-					 break;
-				 case DPacketParser.SIGNAL_RE_HEARTBEAT:
-					 System.out.println("heart beat");
-					 break;
-				 case DPacketParser.SIGNAL_RE_GETUSERCARGROUP:
-					 MsgEventHandler.rGetCarGroup(dp);
-					 break;
-				 case DPacketParser.SIGNAL_RE_GETUSERINFO:
-					 MsgEventHandler.rGetUserInfo(dp);
-					 break;
-				 case DPacketParser.SIGNAL_RE_GETCARINFO:
-					 MsgEventHandler.rGetCarInfo(dp);
-					 break;
+				 if(len>0){
+					 
+					 DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
+					 switch (dp.pktSingal){
+					 case DPacketParser.SIGNAL_RE_LOGIN:
+						 int userid = MsgEventHandler.rLogin(dp);
+						 System.out.println("");
+						 System.out.println("登录成功？"+dp.dataTable.table[0][0]);
+						 System.out.println("用户id："+userid);
+						 System.out.println("GPRS地址："+dp.dataTable.table[0][2]);
+						 System.out.println("GPRS端口："+dp.dataTable.table[0][3]);
+						 break;
+					 case DPacketParser.SIGNAL_RE_HEARTBEAT:
+						 System.out.println("heart beat");
+						 break;
+					 case DPacketParser.SIGNAL_RE_GETUSERCARGROUP:
+						 MsgEventHandler.rGetCarGroup(dp);
+						 break;
+					 case DPacketParser.SIGNAL_RE_GETUSERINFO:
+						 MsgEventHandler.rGetUserInfo(dp);
+						 break;
+					 case DPacketParser.SIGNAL_RE_GETCARINFO:
+						 MsgEventHandler.rGetCarInfo(dp);
+						 break;
+					 case DPacketParser.SIGNAL_RE_GETCARTRACK:
+						 MsgEventHandler.rGetCarTrack(dp);
+						 break;	 
+					 
+					 }
+				
 				 
 				 }
 				 

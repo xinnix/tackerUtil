@@ -1,5 +1,8 @@
 package packet;
 
+import java.util.Arrays;
+
+
 public class ByteHexUtil {
 	
 	/* Convert byte[] to hex string.这里我们可以将byte转换成int，然后利用Integer.toHexString(int)来转换成16进制字符串。  
@@ -67,16 +70,15 @@ public class ByteHexUtil {
 	  * @return byte[] 
 	  */  
 	   
-	 public static byte[] intToByte(int number) {  
-	     byte[] abyte = new byte[4];  
-	     // "&" 与（AND），对两个整型操作数中对应位执行布尔代数，两个位都为1时输出1，否则0。  
-	     abyte[3] = (byte) (0xff & number);  
-	     // ">>"右移位，若为正数则高位补0，若为负数则高位补1  
-	     abyte[2] = (byte) ((0xff00 & number) >> 8);  
-	     abyte[1] = (byte) ((0xff0000 & number) >> 16);  
-	     abyte[0] = (byte) ((0xff000000 & number) >> 24);  
-	     return abyte;  
-	 }  
+	 public static byte[] intToByte(int value)   
+	 {   
+	     byte[] src = new byte[4];  
+	     src[0] = (byte) ((value>>24) & 0xFF);  
+	     src[1] = (byte) ((value>>16)& 0xFF);  
+	     src[2] = (byte) ((value>>8)&0xFF);    
+	     src[3] = (byte) (value & 0xFF);       
+	     return src;  
+	 }
 	   
 	 /** 
 	  *基于位移的 byte[]转化成int 
@@ -84,14 +86,50 @@ public class ByteHexUtil {
 	  * @return int  number 
 	  */  
 	   
-	 public static int bytesToInt(byte[] bytes) {  
-	     int number = bytes[3] & 0xFF;  
-	     // "|="按位或赋值。  
-	     number |= ((bytes[2] << 8) & 0xFF00);  
-	     number |= ((bytes[1] << 16) & 0xFF0000);  
-	     number |= ((bytes[0] << 24) & 0xFF000000);  
-	     return number;  
-	 }  
+	 public static int bytesToInt(byte[] src) {  
+		    int value;    
+		    value = (int) ( ((src[0] & 0xFF)<<24)  
+		            |((src[1] & 0xFF)<<16)  
+		            |((src[2] & 0xFF)<<8)  
+		            |(src[3] & 0xFF));  
+		    return value;  
+	 }
 	 
+	 
+	 
+	 /** 
+	  *基于位移的 byte[]转化成int 
+	  * @param byte[] bytes 
+	  * @return int  number 
+	  */  
+	   
+//	 public static double bytesToDouble(byte[] bytes) {  
+//	     double number = 0;
+//		 int h=bytesToInt(Arrays.copyOfRange(bytes, 0, 4));
+//		 int l=bytesToInt(Arrays.copyOfRange(bytes, 4, 8));
+//		 number = h+l*java.lang.Math.pow((double)10,(double)(-sizeOfInt(l))); 
+//	     return number;  
+//	 } 
+	 public static double bytesToDouble(byte[] bytes)
+	    {
+	        long l = getLong(bytes);
+	       // System.out.println(l);
+	        return Double.longBitsToDouble(l);
+	    }
+	 public static long getLong(byte[] bytes)  
+	    {  
+	        return(0xffL & (long)bytes[0]) | (0xff00L & ((long)bytes[1] << 8)) | (0xff0000L & ((long)bytes[2] << 16)) | (0xff000000L & ((long)bytes[3] << 24))  
+	         | (0xff00000000L & ((long)bytes[4] << 32)) | (0xff0000000000L & ((long)bytes[5] << 40)) | (0xff000000000000L & ((long)bytes[6] << 48)) | (0xff00000000000000L & ((long)bytes[7] << 56));  
+	    } 
+	 
+
+
+//	final static int[] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999,    
+//	            99999999, 999999999, Integer.MAX_VALUE };    
+//	    static int sizeOfInt(int x) {    
+//	        for (int i = 0;; i++)    
+//	            if (x <= sizeTable[i])    
+//	                return i + 1;    
+//	    }  
 
 }

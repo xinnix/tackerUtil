@@ -2,6 +2,7 @@ package tackerUtil;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import network.CNetworkAdapter;
 import network.HeartBeat;
 import network.NetworkAdapter;
 
@@ -15,13 +16,18 @@ public class Util {
 		// TODO Auto-generated method stub
 //		
 		NetworkAdapter na = new NetworkAdapter("61.145.122.143",4519);
+		CNetworkAdapter nac = new CNetworkAdapter("61.145.122.143",4508);
 		na.start();
-		MsgEventHandler.config(na);
-		MsgEventHandler.sLogin("lkk", "lkk");
+		nac.start();
+		MsgEventHandler.config(na,nac);
+		//MsgEventHandler.sLogin("lkk", "lkk");
 		//HeartBeat hb = new HeartBeat();
 		//hb.start();
-		MsgEventHandler.sGetCarTrack(3,"2015-07-28 13:23:00","2015-07-28 13:50:00");
-		//MsgEventHandler.sGetCarInfo(2, "");
+		//MsgEventHandler.sGetCarInfo(9, "");
+		
+		//MsgEventHandler.sGetCarTrack(1,"2015-07-28 13:23:00","2015-07-28 13:50:00");
+		MsgEventHandler.c_slogin("lkk", "lkk");
+		//MsgEventHandler.sGetUserInfo(2);
 		
 		
 		

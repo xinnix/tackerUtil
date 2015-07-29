@@ -96,24 +96,10 @@ public class ByteHexUtil {
 	 }
 	 
 	 
-	 
-	 /** 
-	  *基于位移的 byte[]转化成int 
-	  * @param byte[] bytes 
-	  * @return int  number 
-	  */  
-	   
-//	 public static double bytesToDouble(byte[] bytes) {  
-//	     double number = 0;
-//		 int h=bytesToInt(Arrays.copyOfRange(bytes, 0, 4));
-//		 int l=bytesToInt(Arrays.copyOfRange(bytes, 4, 8));
-//		 number = h+l*java.lang.Math.pow((double)10,(double)(-sizeOfInt(l))); 
-//	     return number;  
-//	 } 
+	
 	 public static double bytesToDouble(byte[] bytes)
 	    {
 	        long l = getLong(bytes);
-	       // System.out.println(l);
 	        return Double.longBitsToDouble(l);
 	    }
 	 public static long getLong(byte[] bytes)  
@@ -122,14 +108,26 @@ public class ByteHexUtil {
 	         | (0xff00000000L & ((long)bytes[4] << 32)) | (0xff0000000000L & ((long)bytes[5] << 40)) | (0xff000000000000L & ((long)bytes[6] << 48)) | (0xff00000000000000L & ((long)bytes[7] << 56));  
 	    } 
 	 
+	 
+	 
+	 /** 
+	  * 转换short为byte 
+	  * 
+	  */  
+	public static byte[] shortToByte(short s) {
+		byte[] b = new byte[2];
+	     b[0] = (byte) (s >> 8);  
+	     b[1] = (byte) (s >> 0); 
+	     return b;
+	}  
+	  
+	/** 
+	  * 通过byte数组取到short 
+	  * 
+	  */  
+	public static short byteToShort(byte[] b) {  
+	      return (short) (((b[ 0] << 8) | b[1] & 0xff));  
+	}  
 
-
-//	final static int[] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999,    
-//	            99999999, 999999999, Integer.MAX_VALUE };    
-//	    static int sizeOfInt(int x) {    
-//	        for (int i = 0;; i++)    
-//	            if (x <= sizeTable[i])    
-//	                return i + 1;    
-//	    }  
 
 }

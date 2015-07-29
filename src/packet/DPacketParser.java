@@ -31,9 +31,12 @@ public class DPacketParser {
 	public static final int SIGNAL_RE_GETCARINFO = 0xffff0006;
 	
 	
+	public static final int SIGNAL_FAIL = 0xffffffff;
+	
+	
 	public int pktHead=0x12345678;	//数据库报文头
 	public int pktLength;
-	public int pktSingal;
+	public int pktSignal;
 	public int pktDataRow;
 	public int pktDataColumn; 
 	public int[] pktDataColumnType;
@@ -50,7 +53,7 @@ public class DPacketParser {
 	public DataTable dataTable;
 	
 	public DPacketParser(int pktSingal,int pktDataRow,int pktDataColumn,int[] pktDataColumnType,int[] pktDataColumnLength,byte[] pktData){
-		this.pktSingal = pktSingal;
+		this.pktSignal = pktSingal;
 		this.pktDataRow = pktDataRow;
 		this.pktDataColumn = pktDataColumn;
 		this.pktDataColumnType = pktDataColumnType;
@@ -67,7 +70,7 @@ public class DPacketParser {
 		try{
 			bis.write(ByteHexUtil.intToByte(this.pktHead));
 			bis.write(ByteHexUtil.intToByte(this.pktLength));
-			bis.write(ByteHexUtil.intToByte(this.pktSingal));
+			bis.write(ByteHexUtil.intToByte(this.pktSignal));
 			bis.write(ByteHexUtil.intToByte(this.pktDataRow));
 			bis.write(ByteHexUtil.intToByte(this.pktDataColumn));
 			for (int ii=0;ii<this.pktDataColumn;ii++){
@@ -104,7 +107,7 @@ public class DPacketParser {
 		this.pktLength = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		byte[] pkt =  Arrays.copyOfRange(pktBuffer, 0, this.pktLength);
 		
-		this.pktSingal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
+		this.pktSignal = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		this.pktDataRow = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		this.pktDataColumn = ByteHexUtil.bytesToInt(Arrays.copyOfRange(pktBuffer,head,head+=4));
 		this.pktDataColumnType = new int[this.pktDataColumn];

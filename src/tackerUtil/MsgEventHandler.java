@@ -1,17 +1,24 @@
 package tackerUtil;
 
+import java.util.Arrays;
+
 import model.Car;
 import model.CarGroup;
+import model.Fail;
 import model.Track;
 import model.User;
+import network.CNetworkAdapter;
 import network.NetworkAdapter;
 import packet.ByteHexUtil;
+import packet.CPacketParser;
 import packet.DPacketParser;
 
 public class MsgEventHandler {
 	public static NetworkAdapter na;
-	public static void config(NetworkAdapter nwa){
+	public static CNetworkAdapter cna;
+	public static void config(NetworkAdapter nwa,CNetworkAdapter cwa){
 		na = nwa;
+		cna = cwa;
 	}
 	public static void sLogin(String username,String password){
 		int[] pktDataColumnType  = {DPacketParser.DATA_TYPE_STRING,DPacketParser.DATA_TYPE_STRING};
@@ -32,6 +39,18 @@ public class MsgEventHandler {
 		
 		int userid =(int) dp.dataTable.table[0][1];
 		return userid;
+		
+	}
+	
+	
+	public static Fail rFail(DPacketParser dp){
+		
+		Fail f = new Fail((int)dp.dataTable.table[0][0],(String)dp.dataTable.table[0][1]);
+		
+		System.out.print(""+f.signal+'#'+f.reason.trim());
+		System.out.println("");	
+	
+		return f;
 		
 	}
 	
@@ -187,27 +206,67 @@ public class MsgEventHandler {
 		
 		System.out.println("got track info");
 		Track[] t = new Track[dp.dataTable.table.length];
-		for (int ii=0;ii<t.length;ii++){
-			t[ii] = new Track((int)dp.dataTable.table[ii][0],
-					(double)dp.dataTable.table[ii][1],
-					(double)dp.dataTable.table[ii][2],
-					(int)dp.dataTable.table[ii][3],
-					(int)dp.dataTable.table[ii][4],
-					(boolean)dp.dataTable.table[ii][5],
-					(String)dp.dataTable.table[ii][6],
-					(String)dp.dataTable.table[ii][7],
-					(boolean)dp.dataTable.table[ii][8],
-					(String)dp.dataTable.table[ii][9]
-					);
-		}
-		
-		
-		for (int ii=0;ii<t.length;ii++){
-			System.out.print(""+t[ii].carId+'#'+t[ii].latitude+'|'+t[ii].longitude+"$"+t[ii].sdate);
-			System.out.println("");	
-		}
+
+			for (int ii=0;ii<t.length;ii++){
+				t[ii] = new Track((int)dp.dataTable.table[ii][0],
+						(double)dp.dataTable.table[ii][1],
+						(double)dp.dataTable.table[ii][2],
+						(int)dp.dataTable.table[ii][3],
+						(int)dp.dataTable.table[ii][4],
+						(boolean)dp.dataTable.table[ii][5],
+						(String)dp.dataTable.table[ii][6],
+						(String)dp.dataTable.table[ii][7],
+						(boolean)dp.dataTable.table[ii][8],
+						(String)dp.dataTable.table[ii][9]
+						);
+			}
+			
+			
+			for (int ii=0;ii<t.length;ii++){
+				System.out.print(""+t[ii].carId+'#'+t[ii].latitude+'|'+t[ii].longitude+"$"+t[ii].sdate);
+				System.out.println("");	
+			}
 		
 		return t;
+	}
+	
+	
+	
+	/*
+	 * 以下是中心报文相关控制函数
+	 */
+	
+	
+	public static void c_slogin(String username,String password){
+		byte signal = (byte)0xa3;
+		int fakeip = 0;
+		byte[] busername = username.getBytes();
+		byte[] bpassword = password.getBytes();
+		byte[] data = new byte[40];
+		for (int ii=0;ii<data.length;ii++){
+			data[ii]=(byte)0x20;
+		}
+		
+		System.arraycopy(busername, 0, data, 0, busername.length);
+		System.arraycopy(bpassword, 0, data, 20, bpassword.length);
+		
+		CPacketParser cp = new CPacketParser(signal, data);
+		System.out.println(ByteHexUtil.bytesToHexString(cp.pktBuffer));
+		cna.sendPacket(cp.pktBuffer);
+			
+	}
+	
+	public static int c_rlogin(CPacketParser cp){
+		
+		byte sig = cp.pktData[0];
+		
+		if (sig==(byte)0x01){
+			System.out.println("login complete");
+			return 0;
+		}else{
+			return 1;
+		}
+	
 	}
 	
 

@@ -53,7 +53,7 @@ public class NetworkAdapter extends Thread {
 				 if(len>0){
 					 
 					 DPacketParser dp = new DPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
-					 switch (dp.pktSingal){
+					 switch (dp.pktSignal){
 					 case DPacketParser.SIGNAL_RE_LOGIN:
 						 int userid = MsgEventHandler.rLogin(dp);
 						 System.out.println("");
@@ -77,6 +77,9 @@ public class NetworkAdapter extends Thread {
 					 case DPacketParser.SIGNAL_RE_GETCARTRACK:
 						 MsgEventHandler.rGetCarTrack(dp);
 						 break;	 
+					 case DPacketParser.SIGNAL_FAIL:
+						 MsgEventHandler.rFail(dp);
+						 break;
 					 
 					 }
 				

@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Arrays;
 
+import model.CarState;
+import packet.ByteHexUtil;
 import packet.CPacketParser;
 import packet.DPacketParser;
 import tackerUtil.MsgEventHandler;
@@ -51,15 +53,19 @@ public class CNetworkAdapter extends Thread {
 			 try{		  			 			 
 				 int len = inputStream.read(recieveBuffer);
 				// System.out.println(len);
-				// System.out.println(ByteHexUtil.bytesToHexString(Arrays.copyOfRange(recieveBuffer,0,len)));
+				 
+				 //
 				 if(len>0){
+					 System.out.println(ByteHexUtil.bytesToHexString(Arrays.copyOfRange(recieveBuffer,0,len)));
 					 
 					 CPacketParser cp = new CPacketParser(Arrays.copyOfRange(recieveBuffer,0,len));
 					 switch (cp.pktSignal){
 					 case CPacketParser.SIGNAL_RE_LOGIN:
-						 int userid = MsgEventHandler.c_rlogin(cp);
-						
+						 int userid = MsgEventHandler.c_rlogin(cp);	
 						 break;
+					 case CPacketParser.SIGNAL_RE_LOCATE:
+						 CarState cs =MsgEventHandler.c_rGetCarPosition(cp);
+						 System.out.println(""+cp.pktFakeIP+cs.gprmc.latitude+cs.gprmc.EorW);
 	
 					 
 					 }

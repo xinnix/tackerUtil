@@ -1,9 +1,11 @@
 package tackerUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import model.Car;
 import model.CarGroup;
+import model.CarState;
 import model.Fail;
 import model.Track;
 import model.User;
@@ -12,6 +14,7 @@ import network.NetworkAdapter;
 import packet.ByteHexUtil;
 import packet.CPacketParser;
 import packet.DPacketParser;
+import packet.MsgGPRSParser;
 
 public class MsgEventHandler {
 	public static NetworkAdapter na;
@@ -258,15 +261,47 @@ public class MsgEventHandler {
 	
 	public static int c_rlogin(CPacketParser cp){
 		
-		byte sig = cp.pktData[0];
+		byte sig = ByteHexUtil.intToByte(cp.pktFakeIP)[0];
 		
 		if (sig==(byte)0x01){
 			System.out.println("login complete");
+			c_sGetCarPosition();
 			return 0;
 		}else{
 			return 1;
 		}
 	
+	}
+	
+	
+	public static void c_sGetCarPosition(){
+		String hexPacket  = "2929a400000000";
+		String end = "0d";
+		byte[] packet = ByteHexUtil.hexStringToBytes(hexPacket);
+		byte check = CPacketParser.packetCheck(packet);
+		ByteArrayOutputStream  bis = new ByteArrayOutputStream();
+		try{
+			bis.write(packet);
+			bis.write(check);
+			bis.write(ByteHexUtil.hexStringToBytes(end));
+		
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println(ByteHexUtil.bytesToHexString(bis.toByteArray()));
+		
+		cna.sendPacket(bis.toByteArray());
+		
+			
+	}
+	
+	
+	public static CarState c_rGetCarPosition(CPacketParser cp){
+		MsgGPRSParser mgp =  new MsgGPRSParser(Arrays.copyOfRange(cp.pktData, 4, cp.pktData.length));
+		CarState cs = new CarState(mgp.msgData);
+		return cs;
+		
 	}
 	
 

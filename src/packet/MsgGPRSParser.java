@@ -2,6 +2,7 @@ package packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 
@@ -15,18 +16,29 @@ public class MsgGPRSParser {
 	public short msgLength;
 	public String msgTermID;
 	public short msgType;
-	public short msgArg;
-	public String msgContent;
-	public short msgReply;
-	public short msgCrc;
-	public short msgEnd;	
+	public String msgData;
+	public short msgCheck;
+	public String msgEnd;	
+	
 	public byte[] msgByteBuf;
-	
-	//合并字节数组
-	private ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+	 
 	
 	
-	MsgGPRSParser(byte[] msgByteBuf){
+	public MsgGPRSParser(byte[] msgByteBuf){
+		int head = 0;
+		
+		this.msgHead = new String(Arrays.copyOfRange(msgByteBuf,head,head+=2));
+		this.msgLength = ByteHexUtil.byteToShort(Arrays.copyOfRange(msgByteBuf,head,head+=2));
+		this.msgTermID = ByteHexUtil.bytesToHexString(Arrays.copyOfRange(msgByteBuf,head,head+=7));		
+		this.msgType = ByteHexUtil.byteToShort(Arrays.copyOfRange(msgByteBuf,head,head+=2));
+		int datalen = this.msgLength-2-2-7-2-2-2;
+		this.msgData = new String(Arrays.copyOfRange(msgByteBuf,head,head+=datalen));
+		this.msgCheck =  ByteHexUtil.byteToShort(Arrays.copyOfRange(msgByteBuf,head,head+=2));
+		this.msgEnd = new String(Arrays.copyOfRange(msgByteBuf,head,head+=2));
+		
+		
+		this.msgByteBuf = msgByteBuf;
+		
 		
 	}//end of MsgParser
 		

@@ -8,6 +8,7 @@ public class CPacketParser {
 	
 	public final static byte SIGNAL_LOGIN = (byte)0xa3; 
 	public final static byte SIGNAL_RE_LOGIN = (byte)0xe3; 
+	public final static byte SIGNAL_RE_LOCATE = (byte)0xaa; 
 	
 	
 	public short pktHead=0x2929;
@@ -87,7 +88,7 @@ public class CPacketParser {
 	
 	}
 	
-	private byte packetCheck(byte[] data){
+	public static byte packetCheck(byte[] data){
 		byte res=data[0];
 	    for (int ii=1; ii<data.length;ii++)
 	    { 

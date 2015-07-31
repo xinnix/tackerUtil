@@ -65,7 +65,7 @@ public class CNetworkAdapter extends Thread {
 						 break;
 					 case CPacketParser.SIGNAL_RE_LOCATE:
 						 CarState cs =MsgEventHandler.c_rGetCarPosition(cp);
-						 System.out.println(""+cp.pktFakeIP+cs.gprmc.latitude+cs.gprmc.EorW);
+						 System.out.println(""+cp.pktFakeIP+"#"+cs.gprmc.latitude+cs.gprmc.EorW);
 	
 					 
 					 }
